@@ -13,23 +13,11 @@ function App() {
   const [res, setRes] = useState<any>(null);
 
   useEffect(() => {
-    const saved = document.querySelector(".saved");
-    saved?.addEventListener("click", () => {
-      saved.classList.toggle("red");
-    });
-  });
-
-  function handleFavorite(word: string) {
-    for (let i = 0; i < favorites.length; i++) {
-      if(favorites[i].word !== word){
-        setFavorites((f) => [...f, {word: word}]);
-      }else{
-        console.log('esta palavra ja esta nos favoritos');
-      }
-      
+    const emptyWord = favorites.find((f) => f.word === "")
+    if(emptyWord){
+      setFavorites([])
     }
-    console.log(favorites);
-  }
+  }, [word])
 
   function handleWord(e: any) {
     setWord(e.target.value);
@@ -54,10 +42,25 @@ function App() {
       .catch((err) => console.log(err));
   }
 
-  function deleteWord(i: number) {}
+  useEffect(() => {
+    const saved = document.querySelector(".saved");
+    saved?.addEventListener("click", () => {
+      saved.classList.toggle("red");
+    });
+  });
+  
+  function handleFavorite(word: string, index : number) {
+    const existentWord = favorites.find((f) => f.word === word);
 
+    if (existentWord) {
+      setFavorites((f) => f.filter((favorite) => favorite.word !== word))
+    } else {
+      setFavorites((f) => [...f, { word: word }]);
+    }
+  }
   return (
     <div className="text-white w-screen h-screen flex flex-col justify-center items-center bg-[#13171C]">
+      <h1 className="text-3xl mb-5 ">Dictionary</h1>
       <div className="border-2 rounded-2xl w-1/3 h-1/10 mb-10 flex items-center">
         <input
           value={word}
@@ -74,7 +77,7 @@ function App() {
             <h1 className="text-2xl self-center uppercase">{res.word}</h1>
             <IconHeart
               className="mx-4 saved self-end absolute top-2"
-              onClick={() => handleFavorite(res.word)}
+              onClick={() => handleFavorite(res.word, 0)}
             />
             {res.meanings && res.meanings.length > 0 && (
               <>
@@ -114,7 +117,14 @@ function App() {
         ) : (
           <>
             <h1 className="text-center my-4 text-2xl">Favorite Words</h1>
-            <FavoriteWords />
+
+            {favorites.map((favorite, index) => (
+              <FavoriteWords
+                key={index}
+                word={favorite.word}
+                handleFavorite={() => handleFavorite(favorite.word, index)}
+              />
+            ))}
           </>
         )}
       </div>

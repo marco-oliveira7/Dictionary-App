@@ -1,26 +1,16 @@
 import { IconHeart, IconTrash } from "@tabler/icons-react";
 import { useEffect } from "react";
 
-interface FavoriteWordsProps{
-  deleteWord: () => void
+interface FavoriteWordsProps {
+  word: string;
+  handleFavorite: () => void;
 }
 
-const FavoriteWords = () => {
-
-  useEffect(() => {
-    const saved = document.querySelector('.saved')
-    saved?.addEventListener('click', () => {
-      saved.classList.toggle('red')
-    })
-  })
-
+const FavoriteWords = (props: FavoriteWordsProps) => {
   return (
     <div className="w-full flex justify-between px-4 my-6 items-center border-amber-50 border-2 h-17 rounded-xl">
-      <p className="text-xl">word</p>
-      <div className="flex">
-        <IconHeart className="mx-4 saved"/>
-        <IconTrash/>
-      </div>
+      <p className="text-xl">{props.word}</p>
+        <IconHeart onClick={props.handleFavorite} className="mx-4 red" />
     </div>
   );
 };
